@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -68,7 +69,7 @@ private fun MainScaffold(startRoute: String) {
                 HomeScreen()
             }
             composable(Routes.MENU) {
-                val categoriesState by menuViewModel.categories.collectAsStateSafe()
+                val categoriesState by menuViewModel.categories.collectAsState()
                 MenuScreen(
                     categoriesState = categoriesState,
                     onCategoryClick = { category ->
@@ -89,7 +90,7 @@ private fun MainScaffold(startRoute: String) {
                 )
             ) { backStackEntry ->
                 val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-                val itemsMap by menuViewModel.menuItemsByCategory.collectAsStateSafe()
+                val itemsMap by menuViewModel.menuItemsByCategory.collectAsState()
                 CategoryDetailScreen(
                     categoryId = categoryId,
                     itemsState = itemsMap[categoryId],
@@ -130,8 +131,3 @@ private fun BottomBar(navController: androidx.navigation.NavHostController) {
         }
     }
 }
-
-// Small helper to keep imports tidy in this file
-@Composable
-private fun <T> kotlinx.coroutines.flow.StateFlow<T>.collectAsStateSafe() =
-    androidx.compose.runtime.collectAsState(initial = this.value)
