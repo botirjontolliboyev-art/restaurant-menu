@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "30999874734",
+    "project_id": "restaran-menu",
+    "storage_bucket": "restaran-menu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:30999874734:android:a92290b6747d998253b13f",
+        "android_client_info": {
+          "package_name": "com.example.restaurantmenu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtlK7_4riVtD9eDwixMNEmKqXKkhdtI6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

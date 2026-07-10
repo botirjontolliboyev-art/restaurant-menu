@@ -1,0 +1,42 @@
+{
+  "_izoh": "Bu fayl faqat namuna. Admin panel orqali yoki Firebase Console'da qo'lda kiritishingiz mumkin.",
+
+  "categories": [
+    { "id": "pizza",     "name": "Pizza",      "order": 0 },
+    { "id": "lavash",    "name": "Lavash",     "order": 1 },
+    { "id": "burger",    "name": "Burger",     "order": 2 },
+    { "id": "donar",     "name": "Donar",      "order": 3 },
+    { "id": "ichimlik",  "name": "Ichimliklar","order": 4 }
+  ],
+
+  "menuItems": [
+    {
+      "categoryId": "pizza",
+      "name": "Margarita",
+      "price": 45000,
+      "imageUrl": "https://images.unsplash.com/photo-1594007654729-407eedc4be65",
+      "available": true
+    },
+    {
+      "categoryId": "pizza",
+      "name": "Pepperoni",
+      "price": 52000,
+      "imageUrl": "https://images.unsplash.com/photo-1628840042765-356cda07504e",
+      "available": true
+    },
+    {
+      "categoryId": "burger",
+      "name": "Cheeseburger",
+      "price": 32000,
+      "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
+      "available": true
+    },
+    {
+      "categoryId": "ichimlik",
+      "name": "Coca-Cola 0.5L",
+      "price": 12000,
+      "imageUrl": "https://images.unsplash.com/photo-1554866585-cd94860890b7",
+      "available": true
+    }
+  ]
+}

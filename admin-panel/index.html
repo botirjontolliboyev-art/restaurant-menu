@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Restoran Admin Panel</title>
+<style>
+  :root {
+    --primary: #E65100;
+    --primary-light: #FFE0B2;
+    --bg: #FFFBFE;
+    --text: #1C1B1F;
+    --card-bg: #ffffff;
+    --border: #e0e0e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 { font-size: 20px; margin: 0; }
+  #configWarning {
+    background: #fff3cd;
+    color: #664d03;
+    padding: 10px 24px;
+    font-size: 14px;
+    display: none;
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  input, select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    width: 100%;
+  }
+  button.primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.danger {
+    background: #ffebee;
+    color: #c62828;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button.secondary {
+    background: #eee;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  th { color: #666; font-weight: 600; }
+  img.thumb {
+    width: 44px; height: 44px; object-fit: cover; border-radius: 8px;
+  }
+  .hidden { display: none; }
+  .badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  .badge.off { background: #ffebee; color: #c62828; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍽️ Restoran — Admin Panel</h1>
+  <span id="statusText" style="font-size:13px;opacity:0.9;"></span>
+</header>
+
+<div id="configWarning">
+  ⚠️ Firebase konfiguratsiyasi kiritilmagan. Quyidagi <code>firebaseConfig</code> qismini
+  index.html faylida o'zingizning Firebase loyihangiz ma'lumotlari bilan to'ldiring.
+</div>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="categories">Kategoriyalar</button>
+    <button class="tab-btn" data-tab="items">Taomlar</button>
+  </div>
+
+  <!-- CATEGORIES TAB -->
+  <div id="tab-categories">
+    <div class="card">
+      <h3>Yangi kategoriya qo'shish</h3>
+      <div class="form-row">
+        <input id="catId" placeholder="ID (masalan: pizza)" />
+        <input id="catName" placeholder="Nomi (masalan: Pizza)" />
+        <input id="catOrder" type="number" placeholder="Tartib raqami (0,1,2...)" />
+      </div>
+      <button class="primary" onclick="addCategory()">+ Qo'shish</button>
+    </div>
+
+    <div class="card">
+      <h3>Mavjud kategoriyalar</h3>
+      <table>
+        <thead><tr><th>Tartib</th><th>ID</th><th>Nomi</th><th></th></tr></thead>
+        <tbody id="categoriesTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ITEMS TAB -->
+  <div id="tab-items" class="hidden">
+    <div class="card">
+      <h3>Yangi taom qo'shish</h3>
+      <div class="form-row">
+        <select id="itemCategory"></select>
+        <input id="itemName" placeholder="Taom nomi" />
+        <input id="itemPrice" type="number" placeholder="Narxi (so'm)" />
+      </div>
+      <div class="form-row">
+        <input id="itemImage" placeholder="Rasm URL manzili (https://...)" />
+        <select id="itemAvailable">
+          <option value="true" selected>Faol (menyuda ko'rinadi)</option>
+          <option value="false">Nofaol (yashirin)</option>
+        </select>
+      </div>
+      <button class="primary" onclick="addItem()">+ Qo'shish</button>
+    </div>
+
+    <div class="card">
+      <h3>Mavjud taomlar</h3>
+      <table>
+        <thead><tr><th>Rasm</th><th>Nomi</th><th>Kategoriya</th><th>Narxi</th><th>Holati</th><th></th></tr></thead>
+        <tbody id="itemsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Firebase SDK (CDN) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc, setDoc, addDoc, deleteDoc,
+    onSnapshot, updateDoc, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // === O'ZINGIZNING FIREBASE KONFIGURATSIYANGIZNI KIRITING ===
+  // Firebase Console -> Project settings -> General -> Your apps -> Web app -> SDK config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbQXeoPLCXq8KAQQ57GXe6APhuU0u84gA",
+    authDomain: "restaran-menu.firebaseapp.com",
+    projectId: "restaran-menu",
+    storageBucket: "restaran-menu.firebasestorage.app",
+    messagingSenderId: "30999874734",
+    appId: "1:30999874734:web:f22125a1091e247253b13f"
+  };
+
+  if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+    document.getElementById("configWarning").style.display = "block";
+  }
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const categoriesCol = collection(db, "categories");
+  const itemsCol = collection(db, "menuItems");
+
+  let categoriesCache = [];
+
+  // ---- Categories realtime listener ----
+  onSnapshot(query(categoriesCol, orderBy("order")), (snapshot) => {
+    categoriesCache = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderCategories();
+    renderCategoryOptions();
+  });
+
+  function renderCategories() {
+    const body = document.getElementById("categoriesTableBody");
+    body.innerHTML = "";
+    categoriesCache.forEach(cat => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${cat.order ?? ""}</td>
+        <td>${cat.id}</td>
+        <td>${cat.name}</td>
+        <td><button class="danger" onclick="deleteCategory('${cat.id}')">O'chirish</button></td>
+      `;
+      body.appendChild(tr);
+    });
+  }
+
+  function renderCategoryOptions() {
+    const select = document.getElementById("itemCategory");
+    select.innerHTML = categoriesCache
+      .map(c => `<option value="${c.id}">${c.name}</option>`)
+      .join("");
+  }
+
+  window.addCategory = async function () {
+    const id = document.getElementById("catId").value.trim();
+    const name = document.getElementById("catName").value.trim();
+    const order = parseInt(document.getElementById("catOrder").value || "0", 10);
+    if (!id || !name) { alert("ID va Nomi majburiy"); return; }
+    await setDoc(doc(db, "categories", id), { name, order });
+    document.getElementById("catId").value = "";
+    document.getElementById("catName").value = "";
+    document.getElementById("catOrder").value = "";
+  };
+
+  window.deleteCategory = async function (id) {
+    if (!confirm("Kategoriyani o'chirmoqchimisiz?")) return;
+    await deleteDoc(doc(db, "categories", id));
+  };
+
+  // ---- Menu items realtime listener ----
+  onSnapshot(itemsCol, (snapshot) => {
+    const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderItems(items);
+  });
+
+  function renderItems(items) {
+    const body = document.getElementById("itemsTableBody");
+    body.innerHTML = "";
+    items.forEach(item => {
+      const catName = categoriesCache.find(c => c.id === item.categoryId)?.name || item.categoryId;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><img class="thumb" src="${item.imageUrl || ''}" onerror="this.style.opacity=0.2" /></td>
+        <td>${item.name}</td>
+        <td>${catName}</td>
+        <td>${Number(item.price).toLocaleString()} so'm</td>
+        <td><span class="badge ${item.available ? '' : 'off'}">${item.available ? 'Faol' : 'Nofaol'}</span></td>
+        <td>
+          <button class="secondary" onclick="toggleAvailable('${item.id}', ${!item.available})">
+            ${item.available ? 'Yashirish' : 'Faollashtirish'}
+          </button>
+          <button class="danger" onclick="deleteItem('${item.id}')">O'chirish</button>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+  }
+
+  window.addItem = async function () {
+    const categoryId = document.getElementById("itemCategory").value;
+    const name = document.getElementById("itemName").value.trim();
+    const price = parseFloat(document.getElementById("itemPrice").value || "0");
+    const imageUrl = document.getElementById("itemImage").value.trim();
+    const available = document.getElementById("itemAvailable").value === "true";
+
+    if (!categoryId) { alert("Avval kamida bitta kategoriya qo'shing"); return; }
+    if (!name || !price) { alert("Taom nomi va narxi majburiy"); return; }
+
+    await addDoc(itemsCol, { categoryId, name, price, imageUrl, available });
+    document.getElementById("itemName").value = "";
+    document.getElementById("itemPrice").value = "";
+    document.getElementById("itemImage").value = "";
+  };
+
+  window.toggleAvailable = async function (id, newValue) {
+    await updateDoc(doc(db, "menuItems", id), { available: newValue });
+  };
+
+  window.deleteItem = async function (id) {
+    if (!confirm("Taomni o'chirmoqchimisiz?")) return;
+    await deleteDoc(doc(db, "menuItems", id));
+  };
+
+  document.getElementById("statusText").textContent = "Firestore bilan real-vaqt ulanish faol";
+</script>
+
+<script>
+  // Tab switching
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("tab-categories").classList.add("hidden");
+      document.getElementById("tab-items").classList.add("hidden");
+      document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+    });
+  });
+</script>
+
+</body>
+</html>
