@@ -5,9 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,11 +26,11 @@ import androidx.compose.ui.unit.dp
 import com.example.restaurantmenu.R
 
 /**
- * Simple welcome/home screen: shows the restaurant logo + name.
- * Extend this later with promo banners, featured items, etc.
+ * Welcome/home screen: restaurant logo, name, tagline, and a call-to-action
+ * button that navigates to the Menu tab.
  */
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onMenuClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,11 +50,19 @@ fun HomeScreen() {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Xush kelibsiz! Menyumizni ko'rib chiqing.",
+            text = "Har bir taomda did va mehr bor.\n" +
+                "Sifatli mahsulotlar, issiq muhit.\n" +
+                "Siz uchun har kuni yangi ta'mlar.",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.height(28.dp))
+        Button(onClick = onMenuClick, modifier = Modifier.fillMaxWidth(0.8f)) {
+            Text(text = "Menu bilan tanishing")
+            Spacer(modifier = Modifier.height(0.dp))
+            Icon(Icons.Filled.ArrowForward, contentDescription = null)
+        }
     }
 }
