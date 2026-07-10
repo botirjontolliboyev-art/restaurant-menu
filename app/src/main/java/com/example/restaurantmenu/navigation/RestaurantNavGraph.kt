@@ -65,9 +65,18 @@ private fun MainScaffold(startRoute: String) {
             startDestination = startRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Routes.HOME) {
-                HomeScreen()
+          composable(Routes.HOME) {
+                HomeScreen(onMenuClick = { navController.navigate(Routes.MENU) })
             }
+            composable(
+                route = Routes.MENU,
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                }
+            ) {
             composable(Routes.MENU) {
                 val categoriesState by menuViewModel.categories.collectAsState()
                 MenuScreen(
