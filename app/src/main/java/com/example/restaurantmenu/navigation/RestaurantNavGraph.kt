@@ -1,9 +1,10 @@
 package com.example.restaurantmenu.navigation
-import androidx.compose.foundation.layout.padding
+
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -33,10 +34,6 @@ import com.example.restaurantmenu.ui.menu.MenuScreen
 import com.example.restaurantmenu.ui.splash.SplashScreen
 import com.example.restaurantmenu.viewmodel.MenuViewModel
 
-/**
- * Entry composable for the whole app: handles splash -> main flow switch
- * and hosts the bottom-navigation NavHost.
- */
 @Composable
 fun RestaurantApp() {
     val rootNavController = rememberNavController()
@@ -68,7 +65,7 @@ private fun MainScaffold(startRoute: String) {
             startDestination = startRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-          composable(Routes.HOME) {
+            composable(Routes.HOME) {
                 HomeScreen(onMenuClick = { navController.navigate(Routes.MENU) })
             }
             composable(
@@ -80,7 +77,6 @@ private fun MainScaffold(startRoute: String) {
                     slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
                 }
             ) {
-            composable(Routes.MENU) {
                 val categoriesState by menuViewModel.categories.collectAsState()
                 MenuScreen(
                     categoriesState = categoriesState,
